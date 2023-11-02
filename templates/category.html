@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block metadescription %}
+    {% if category %}
+       {{ category.description|truncatewords:155 }}
+    {% else %}
+        welcome to e shopping
+    {% endif %}
+{% endblock %}
+
+{% block title %}
+    {% if category %}
+        {{ category.name }} - E shopping
+    {% else %}
+        see our awesome collections - E shopping
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Add this to your CSS file */
+.my_card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+.card-img-top {
+    max-height: 200px;
+    object-fit: cover;
+}
+
+.my_bottom_margin {
+    margin-bottom: 20px;
+}
+
+/* Ensure consistent height for cards */
+.card {
+    height: 100%;
+}
+
+/* Ensure consistent height for card bodies */
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Ensure image size is consistent */
+.card-img-top {
+    max-height: 350px;
+    object-fit: cover;
+}
+.category-image {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+}
+
+
+</style>
+    {% if category %}
+        <div>
+            <div class="my_row_class">
+                <div class="mx-auto">
+                    <p><a href="{% url 'ewebapp:allProdCat' %}">Our product collection</a></p>
+                </div>
+            </div>
+        </div>
+       <div class="mx-auto text-center">
+    {% if category.image %}
+        <img class="my_image category-image" src="{{ category.image.url }}" alt="{{ category.name }}">
+    {% endif %}
+</div>
+
+        <br>
+        <div>
+            <h1 class="text-center my_title">{{ category.name }}</h1>
+            <p class="text-justify">{{ category.description }}</p>
+        </div>
+    {% else %}
+        <div>
+            <img class="my_image my_image_padding" src="{% static 'img/banner.png' %}" alt="our products">
+        </div>
+        <br>
+        <div>
+            <h1 class="text-center my title">Our product collections</h1>
+            <p class="text-justify">Welcome to our diverse collection of premium products. From cutting-edge technology to timeless classics, we offer a wide range of items tailored to meet your needs. Our curated selection ensures that every product is of the highest quality, guaranteeing satisfaction with every purchase. Discover the latest trends in fashion, home decor, and electronics, all in one place. With a focus on both style and functionality, our products are designed to enhance your everyday life. Whether you're shopping for yourself or finding the perfect gift, you'll find it here. Browse through our catalog and experience the convenience of online shopping with us. Elevate your lifestyle with our exceptional range of products, sourced from trusted brands worldwide. Shop now and embark on a journey of discovery with our exclusive collections.</p>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row mx_auto">
+            {% for product in products.object_list %}
+                <div class="my_bottom_margin col-9 col-sm-12 col-md-4 xol-lg-4">
+                    <div class="card text-center" style="min-width:15rem;">
+                        <a href="{{ product.get_url }}">
+                            {% if product.image %}
+                                <img class="card-img-top my_image" src="{{ product.image.url }}">
+                            {% else %}
+                                <img class="card-img-top my_image" src="{% static 'img/placeholder.png' %}" alt="Placeholder">
+                            {% endif %}
+                        </a>
+                        <div class="card-body">
+                            <h4>{{ product.name }}</h4>
+                            <p>{{ product.price }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mx-auto">
+        {% if products.paginator.num_pages > 1 %}
+            <hr>
+            <div class="text-center">
+                {% for pg in products.paginator.page_range %}
+                    <a href="?page={{pg}}"  class="btn btn-light btn-sm {% if products.number == pg %} active {% endif %}">{{pg}}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
